@@ -16,8 +16,8 @@ const Dashboard = () => {
         <Grid container spacing={3}>
           {/* <Grid item xs={12} lg={8}>
             <ProfitExpenses />
-          </Grid> */}
-          {/* <Grid item xs={12} lg={4}>
+          </Grid>
+          <Grid item xs={12} lg={4}>
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <TrafficDistribution />

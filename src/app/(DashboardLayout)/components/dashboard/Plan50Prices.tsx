@@ -1,3 +1,7 @@
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import CallMadeIcon from "@mui/icons-material/CallMade";
+import CallReceivedIcon from "@mui/icons-material/CallReceived";
 import {
   Typography,
   Box,
@@ -10,6 +14,10 @@ import {
   Paper,
   CardContent,
   TextField,
+  ButtonGroup,
+  Button,
+  InputBase,
+  Input,
 } from "@mui/material";
 import DashboardCard from "@/app/(DashboardLayout)//components/shared/DashboardCard";
 import generateOPT from "@/app/handleEntry/generatePlanEntry";
@@ -20,42 +28,178 @@ import { useState, useEffect } from "react";
 import { fetchAPI_XAU } from "@/app/handleEntry/fetchPriceXAU";
 import BlankCard from "../shared/BlankCard";
 import IGold from "@/app/Interface/IGold";
+import { isHasValue } from "@/utils/helper/isHasValue";
+import TrafficDistribution from "./TrafficDistribution";
+import theme from "@/utils/theme";
+import curState from "@/utils/helper/currentState";
 
 const Plan50Prices = () => {
   const [currentPrice, setCurrentPrice] = useState<number>(0);
-  const [entryInit, setEntryInit] = useState<number>(2000);
+  const [entryInit, setEntryInit] = useState<number>(0);
+  const [targetProfit, setTargetProfit] = useState<number>(50);
   const [type, setType] = useState<boolean>(false);
-  console.log("currentprice:12321", currentPrice);
-
   const fetchXAU = async () => {
     await fetchAPI_XAU().then((res) => {
       setCurrentPrice(res?.data.values[0].open);
     });
-  }
+  };
+  const listPlan = generateOPT(
+    type,
+    listLot,
+    entryInit,
+    0.5,
+    targetProfit,
+    currentPrice
+  );
 
   useEffect(() => {
-    fetchXAU()
+    fetchXAU();
   }, []);
-  const planEntry = generateOPT(type, listLot, currentPrice, 0.5, 50);
-  console.log("planEntry:", planEntry);
+
+  useEffect(() => {
+    if (entryInit === 0) {
+      setEntryInit(Number(document.getElementById("entryInput")));
+    }
+  }, [entryInit]);
+
   return (
     <DashboardCard title="Plan to place orders at 50 prices">
       <Box sx={{ overflow: "auto" }}>
         <Box sx={{ width: "100%", display: "table", tableLayout: "fixed" }}>
           <BlankCard>
-            <CardContent sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Box sx={{ display: "flex", justifyContent: "flex-start", gap: 4 }}>
-                <TextField placeholder={currentPrice.toString()} />
-              </Box>
-              <Box>
-                <Typography
-                  variant="h2"
-                  sx={{ color: (theme) => theme.palette.success.main }}
-                  fontWeight={700}
+            <CardContent
+              sx={{ display: "flex", justifyContent: "space-between" }}
+            >
+              <Box sx={{ display: "block", mr: 2 }}>
+                <InputBase
+                  id="entryInput"
+                  defaultValue={Number(currentPrice).toFixed(1)}
+                  sx={{
+                    border: 2,
+                    borderColor: "#ebebeb",
+                    maxWidth: "650px",
+                    maxHeight: "63px",
+                    borderRadius: "50px",
+                    padding: 1,
+                    fontSize: "24px",
+                    paddingInline: 1,
+                  }}
+                  onChange={(e) => {
+                    // if (Number(e.target.value) > currentPrice - 100) { setEntryInit(Number(e.target.value)) }
+                    // if (Number(e.target.value) === 0) { setEntryInit(currentPrice) };
+                    setEntryInit(Number(e.target.value));
+                  }}
+                  placeholder={Number(currentPrice).toFixed(1)}
+                  startAdornment={
+                    <Box sx={{ minWidth: "150px", ml: 2 }}>
+                      <Typography variant="h3" fontWeight={200}>
+                        Init Entry:
+                      </Typography>
+                    </Box>
+                  }
+                  endAdornment={
+                    <ButtonGroup
+                      disableElevation
+                      variant="contained"
+                      sx={{ justifyContent: "space-between" }}
+                    >
+                      <InputBase
+                        defaultValue={Number(targetProfit).toFixed(0)}
+                        sx={{
+                          borderRadius: "150px",
+                          maxWidth: "90px",
+                          fontSize: "24px",
+                          mr: 2,
+                        }}
+                        onChange={(e) =>
+                          setTargetProfit(Number(e.target.value))
+                        }
+                        placeholder={"50 Pips"}
+                      />
+                      <Button
+                        color="error"
+                        sx={{ width: type ? "100px" : "200px" }}
+                        startIcon={<CallReceivedIcon />}
+                        onClick={() => setType(false)}
+                      >
+                        Sell
+                      </Button>
+                      <Button
+                        color="success"
+                        sx={{ width: !type ? "100px" : "200px" }}
+                        onClick={() => setType(true)}
+                        endIcon={<CallMadeIcon />}
+                      >
+                        Buy{" "}
+                      </Button>
+                    </ButtonGroup>
+                  }
+                />
+                <Box
+                  sx={{
+                    mt: 2,
+                    p: 2,
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
                 >
-                  {currentPrice}
-                </Typography>
+                  <Box
+                    sx={{
+                      display: "block",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "50%",
+                    }}
+                  >
+                    <Typography variant="h6" fontWeight={400}>
+                      Current Price
+                    </Typography>
+                    <Typography variant="subtitle2" fontSize={36}>
+                      {Number(currentPrice).toFixed(2)}
+                    </Typography>{" "}
+                    <Typography mt={2} variant="h6" fontWeight={400}>
+                      Average Entry
+                    </Typography>
+                    <Typography variant="subtitle2" fontSize={36}>
+                      {Number(listPlan[listPlan.length - 1].avgEntry).toFixed(
+                        2
+                      )}
+                    </Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: "block",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "50%",
+                    }}
+                  >
+                    <Typography variant="h5" fontWeight={400}>
+                      Total Profit
+                    </Typography>
+                    <Box sx={{ display: "flex" }}>
+                      <Typography
+                        variant="subtitle2"
+                        fontSize={45}
+                        color={curState(
+                          Number(listPlan[listPlan.length - 1].profit),
+                          currentPrice,
+                          type
+                        )}
+                      >
+                        {`${listPlan[listPlan.length - 1].profit?.toFixed(
+                          0
+                        )} USC`}
+                      </Typography>
+                    </Box>
+                    <Typography mt={2} variant="h4" fontWeight={400}>
+                      Total order matching: {listPlan.length}
+                    </Typography>
+                  </Box>
+                </Box>
               </Box>
+
+              <TrafficDistribution type={type} profit={Number(listPlan[listPlan.length - 1].profit)} numOfMatch={listPlan.length - 1} />
             </CardContent>
           </BlankCard>
           <Table
@@ -87,7 +231,7 @@ const Plan50Prices = () => {
                 </TableCell>
                 <TableCell>
                   <Typography variant="h5" fontWeight={600}>
-                    Point TP
+                    Average
                   </Typography>
                 </TableCell>
                 <TableCell align="right">
@@ -98,14 +242,20 @@ const Plan50Prices = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {planEntry.map((plan: Eprop) => {
-                const frofit = calculateProfit(
-                  plan,
-                  currentPrice,
-                  type
-                );
+              {listPlan.map((plan: Eprop) => {
                 return (
-                  <TableRow key={plan.id}>
+                  <TableRow
+                    key={plan.id}
+                    sx={{
+                      bgcolor: type
+                        ? plan.entry < currentPrice
+                          ? "#f5f5f5"
+                          : "unset"
+                        : plan.entry > currentPrice
+                        ? "#f5f5f5"
+                        : "unset",
+                    }}
+                  >
                     <TableCell>
                       <Typography
                         sx={{
@@ -133,16 +283,12 @@ const Plan50Prices = () => {
                         }}
                       >
                         <Box>
-                          <Typography variant="subtitle2" fontWeight={600}>
-                            {plan.entry}
-                          </Typography>
                           <Typography
-                            color="textSecondary"
-                            sx={{
-                              fontSize: "13px",
-                            }}
+                            variant="subtitle2"
+                            color={curState(plan.entry, currentPrice, type)}
+                            fontWeight={600}
                           >
-                            {plan.avgEntry.toFixed(3)}
+                            {plan.entry}
                           </Typography>
                         </Box>
                       </Box>
@@ -160,18 +306,21 @@ const Plan50Prices = () => {
                       <Chip
                         sx={{
                           px: "4px",
-                          color: "#000",
+                          color: curState(plan.avgEntry, currentPrice, type),
                         }}
                         size="small"
-                        label={plan.pTP?.toFixed(2) || "0"}
+                        label={plan.avgEntry.toFixed(2) || "0"}
                       ></Chip>
                     </TableCell>
-                    <TableCell align="right">
-                      <Typography variant="h6">
-                        {frofit.profit === undefined
-                          ? 0
-                          : frofit.profit.toFixed(1)}{" "}
-                        USC
+                    <TableCell sx={{ display: "flex", justifyContent: "end" }}>
+                      <Typography
+                        variant="h6"
+                        color={curState(Number(plan.entry), currentPrice, type)}
+                      >
+                        {plan.profit?.toFixed(0)}
+                      </Typography>
+                      <Typography variant="subtitle2" fontSize={10}>
+                        ` USC`
                       </Typography>
                     </TableCell>
                   </TableRow>

@@ -5,11 +5,13 @@ export default function generateOPT(
   listLot: number[],
   initEntry: number,
   spread: number,
-  pip: number
+  pip: number,
+  currentPrice: number | 0
 ): Eprop[] {
+  console.log("🚀 ~ type", type);
   let sumVolRunningTotal = 0;
   let trungbinhGIA = 0;
-
+  let pips = !type ? pip : -pip;
   const UOP: Eprop[] = listLot.map((vol, index) => {
     const entry =
       index == 0
@@ -36,10 +38,14 @@ export default function generateOPT(
     item.avgEntry = sum / item.sumVol;
     return item;
   });
-  const pointTP =
-    AVGL[AVGL.length - 1].avgEntry + (type ? pip / 10 : (pip / 10) * -1);
+  const pointTP = AVGL[AVGL.length - 1].avgEntry + pips / 10;
   return AVGL.map((item, index) => {
     item.pTP = pointTP;
+    item.profit =
+      currentPrice === undefined
+        ? 0
+        : (type ? currentPrice - item.avgEntry : item.avgEntry - currentPrice) *
+          (item.sumVol * 100);
     return item;
   });
 }
