@@ -40,8 +40,8 @@ const Plan50Prices = () => {
   const [type, setType] = useState<boolean>(false);
   const fetchXAU = async () => {
     await fetchAPI_XAU().then((res) => {
-      // setCurrentPrice(res?.data.values[0].open);
-      setCurrentPrice(2221.5);
+      setCurrentPrice(res?.data.values[0].open);
+      // setCurrentPrice(2221.5);
     });
   };
   const listPlan = generateOPT(
@@ -155,15 +155,21 @@ const Plan50Prices = () => {
                     <Typography variant="h6" fontWeight={400}>
                       Giá hiện tại
                     </Typography>
-                    <Box><InputBase
-
-
-
-                      sx={{ fontSize: 22,   fontWeight: 700 }}
-
+                    <Box sx={{ display: "flex" }}><InputBase
+                      sx={{ fontSize: 22, fontWeight: 700 }}
                       defaultValue={Number(currentPrice).toFixed(2)}
                       placeholder={'Nhập giá hiện tại'}
-                    /></Box>
+                    />
+                      <Button
+                        variant="contained"
+                        color="error"
+                        sx={{ maxWidth: '80px', borderRadius: "30px" }}
+                        startIcon={<RefreshIcon />}
+                        onClick={() => fetchXAU()}
+                      >
+                        Fetch
+                      </Button>
+                    </Box>
                     <Typography mt={2} variant="h6" fontWeight={400}>
                       Giá trung bình
                     </Typography>
@@ -182,7 +188,7 @@ const Plan50Prices = () => {
                     }}
                   >
                     <Typography variant="h5" fontWeight={400}>
-                     Lợi nhuận 
+                      Lợi nhuận
                     </Typography>
                     <Box sx={{ display: "flex" }}>
                       <Typography
@@ -266,8 +272,8 @@ const Plan50Prices = () => {
                           ? "#f5f5f5"
                           : "unset"
                         : plan.entry > currentPrice
-                        ? "#f5f5f5"
-                        : "unset",
+                          ? "#f5f5f5"
+                          : "unset",
                     }}
                   >
                     <TableCell>
