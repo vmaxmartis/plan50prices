@@ -1,3 +1,4 @@
+
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import CallMadeIcon from "@mui/icons-material/CallMade";
@@ -40,9 +41,13 @@ const Plan50Prices = () => {
   const [type, setType] = useState<boolean>(false);
   const fetchXAU = async () => {
     await fetchAPI_XAU().then((res) => {
-      setCurrentPrice(res?.data.values[0].open);
+setCurrentPrice(res?.data.values[0].open);
+   const inputElement = document.getElementById('currPrice'); if (inputElement) {
+        inputElement.value = Number(res?.data.values[0].open).toFixed(2);
       // setCurrentPrice(2221.5);
-    });
+    }
+    })
+      
   };
   const listPlan = generateOPT(
     type,
@@ -155,21 +160,12 @@ const Plan50Prices = () => {
                     <Typography variant="h6" fontWeight={400}>
                       Giá hiện tại
                     </Typography>
-                    <Box sx={{ display: "flex" }}><InputBase
-                      sx={{ fontSize: 22, fontWeight: 700 }}
+                    <InputBase
+                      id='currPrice'
+                      sx={{ fontSize: 22, fontWeight: 700, maxWidth:"150px" }}
                       defaultValue={Number(currentPrice).toFixed(2)}
-                      placeholder={'Nhập giá hiện tại'}
+                      placeholder={'Nhập giá hiện tại'} endAdornment={<RefreshIcon onClick={() => fetchXAU()} color="success" />}
                     />
-                      <Button
-                        variant="contained"
-                        color="error"
-                        sx={{ maxWidth: '80px', borderRadius: "30px" }}
-                        startIcon={<RefreshIcon />}
-                        onClick={() => fetchXAU()}
-                      >
-                        Fetch
-                      </Button>
-                    </Box>
                     <Typography mt={2} variant="h6" fontWeight={400}>
                       Giá trung bình
                     </Typography>
