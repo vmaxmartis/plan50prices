@@ -8,7 +8,6 @@ export default function generateOPT(
   pip: number,
   currentPrice: number | 0
 ): Eprop[] {
-  console.log("🚀 ~ type", type);
   let sumVolRunningTotal = 0;
   let trungbinhGIA = 0;
   let pips = !type ? pip : -pip;

@@ -18,8 +18,14 @@ interface Props {
   type: boolean;
   profit: number;
   numOfMatch: number;
+  numOfPlan: number;
 }
-const TrafficDistribution: React.FC<Props> = ({ type, profit, numOfMatch }) => {
+const TrafficDistribution: React.FC<Props> = ({
+  type,
+  profit,
+  numOfMatch,
+  numOfPlan,
+}) => {
   // chart color
   const theme = useTheme();
   const primary = theme.palette.primary.main;
@@ -114,45 +120,12 @@ const TrafficDistribution: React.FC<Props> = ({ type, profit, numOfMatch }) => {
                 total
               </Typography>
             </Stack>
-            <Stack spacing={3} mt={3} direction="row">
-              <Stack direction="row" spacing={1} alignItems="center">
-                <Avatar
-                  sx={{
-                    width: 9,
-                    height: 9,
-                    bgcolor: "#d2d2d2",
-                    svg: { display: "none" },
-                  }}
-                ></Avatar>
-                <Typography
-                  variant="subtitle2"
-                  fontSize="12px"
-                  color="textSecondary"
-                >
-                  Vốn
-                </Typography>
-              </Stack>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <Avatar
-                  sx={{
-                    width: 10,
-                    height: 10,
-                    bgcolor: Number(profit) > 0 ? success : error,
-                    svg: { display: "none" },
-                  }}
-                ></Avatar>
-                <Typography
-                  variant="subtitle2"
-                  fontSize="12px"
-                  color="textSecondary"
-                >
-                  Profit
-                </Typography>
-              </Stack>
-            </Stack>
+                    <Typography mt={5} variant="subtitle2" fontSize={36}>
+                      {numOfPlan}/50
+                    </Typography>
           </Grid>
           {/* column */}
-          <Grid item xs={6} sm={5}>
+          <Grid item xs={6} sm={5} spacing={20}>
             {/* <Chart
               options={optionscolumnchart}
               series={seriescolumnchart}
@@ -160,21 +133,12 @@ const TrafficDistribution: React.FC<Props> = ({ type, profit, numOfMatch }) => {
               width={"100%"}
               height="150px"
             /> */}
-            <Tooltip title={`${numOfMatch}/50`} followCursor>
-              <CircularProgress
-                variant="determinate"
-                size={80}
-                value={Number((numOfMatch) / 50)}
-                color={profit > 0 ? "success" : "error"}
-                // variant="indeterminate"
-                thickness={6}
-              />
-            </Tooltip>
+
             <Tooltip title={`${Number(profit).toFixed(2)} usc`} followCursor>
               <CircularProgress
                 variant="determinate"
-                size={80}
-                value={Number((profit * 100)/50000)}
+                size={120}
+                value={Number((profit * 100) / 50000)}
                 color={profit > 0 ? "success" : "error"}
                 // variant="indeterminate"
                 thickness={6}

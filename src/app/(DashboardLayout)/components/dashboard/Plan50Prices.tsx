@@ -34,20 +34,21 @@ import theme from "@/utils/theme";
 import curState from "@/utils/helper/currentState";
 
 const Plan50Prices = () => {
-  const [currentPrice, setCurrentPrice] = useState<number>(0);
+  const [currentPrice, setCurrentPrice] = useState<number>(2221.5);
   const [entryInit, setEntryInit] = useState<number>(0);
   const [targetProfit, setTargetProfit] = useState<number>(50);
   const [type, setType] = useState<boolean>(false);
   const fetchXAU = async () => {
     await fetchAPI_XAU().then((res) => {
-      setCurrentPrice(res?.data.values[0].open);
+      // setCurrentPrice(res?.data.values[0].open);
+      setCurrentPrice(2221.5);
     });
   };
   const listPlan = generateOPT(
     type,
     listLot,
     entryInit,
-    0.5,
+    1.5,
     targetProfit,
     currentPrice
   );
@@ -81,7 +82,7 @@ const Plan50Prices = () => {
                     maxHeight: "63px",
                     borderRadius: "50px",
                     padding: 1,
-                    fontSize: "24px",
+                    fontSize: "20px",
                     paddingInline: 1,
                   }}
                   onChange={(e) => {
@@ -92,8 +93,8 @@ const Plan50Prices = () => {
                   placeholder={Number(currentPrice).toFixed(1)}
                   startAdornment={
                     <Box sx={{ minWidth: "150px", ml: 2 }}>
-                      <Typography variant="h3" fontWeight={200}>
-                        Init Entry:
+                      <Typography variant="h5" fontWeight={200}>
+                        Điểm vào lệnh:
                       </Typography>
                     </Box>
                   }
@@ -108,7 +109,7 @@ const Plan50Prices = () => {
                         sx={{
                           borderRadius: "150px",
                           maxWidth: "90px",
-                          fontSize: "24px",
+                          fontSize: "20px",
                           mr: 2,
                         }}
                         onChange={(e) =>
@@ -152,15 +153,21 @@ const Plan50Prices = () => {
                     }}
                   >
                     <Typography variant="h6" fontWeight={400}>
-                      Current Price
+                      Giá hiện tại
                     </Typography>
-                    <Typography variant="subtitle2" fontSize={36}>
-                      {Number(currentPrice).toFixed(2)}
-                    </Typography>{" "}
+                    <Box><InputBase
+
+
+
+                      sx={{ fontSize: 22,   fontWeight: 700 }}
+
+                      defaultValue={Number(currentPrice).toFixed(2)}
+                      placeholder={'Nhập giá hiện tại'}
+                    /></Box>
                     <Typography mt={2} variant="h6" fontWeight={400}>
-                      Average Entry
+                      Giá trung bình
                     </Typography>
-                    <Typography variant="subtitle2" fontSize={36}>
+                    <Typography variant="subtitle2" fontSize={22}>
                       {Number(listPlan[listPlan.length - 1].avgEntry).toFixed(
                         2
                       )}
@@ -175,7 +182,7 @@ const Plan50Prices = () => {
                     }}
                   >
                     <Typography variant="h5" fontWeight={400}>
-                      Total Profit
+                     Lợi nhuận 
                     </Typography>
                     <Box sx={{ display: "flex" }}>
                       <Typography
@@ -193,13 +200,20 @@ const Plan50Prices = () => {
                       </Typography>
                     </Box>
                     <Typography mt={2} variant="h4" fontWeight={400}>
-                      Total order matching: {listPlan.length}
+                      Số lệnh đã khớp: {listPlan.length}
                     </Typography>
                   </Box>
                 </Box>
               </Box>
 
-              <TrafficDistribution type={type} profit={Number(listPlan[listPlan.length - 1].profit)} numOfMatch={listPlan.length - 1} />
+              <TrafficDistribution
+                type={type}
+                profit={Number(listPlan[listPlan.length - 1].profit)}
+                numOfMatch={listPlan.length - 1}
+                numOfPlan={
+                  listPlan[listPlan.length - 1].entry - listPlan[0].entry
+                }
+              />
             </CardContent>
           </BlankCard>
           <Table
