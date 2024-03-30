@@ -8,6 +8,7 @@ import {
   Avatar,
   Box,
   CircularProgress,
+  Tooltip,
 } from "@mui/material";
 import { IconArrowUpLeft, IconArrowDownLeft } from "@tabler/icons-react";
 
@@ -75,7 +76,7 @@ const TrafficDistribution: React.FC<Props> = ({ type, profit, numOfMatch }) => {
   const seriescolumnchart: any = [50000 - profit, profit];
 
   return (
-    <Box sx={{ minWidth: "40%" }}>
+    <Box sx={{ minWidth: "45%" }}>
       <DashboardCard title="Traffic Distribution">
         <Grid container spacing={3}>
           {/* column */}
@@ -159,13 +160,26 @@ const TrafficDistribution: React.FC<Props> = ({ type, profit, numOfMatch }) => {
               width={"100%"}
               height="150px"
             /> */}
-            <CircularProgress
-              variant="determinate"
-              size={150}
-              value={Number((profit * 100) / 50000)}
-              color={profit > 0 ? "success" : "error"}
-              // variant="indeterminate"
-            />
+            <Tooltip title={`${numOfMatch}/50`} followCursor>
+              <CircularProgress
+                variant="determinate"
+                size={80}
+                value={Number((numOfMatch) / 50)}
+                color={profit > 0 ? "success" : "error"}
+                // variant="indeterminate"
+                thickness={6}
+              />
+            </Tooltip>
+            <Tooltip title={`${Number(profit).toFixed(2)} usc`} followCursor>
+              <CircularProgress
+                variant="determinate"
+                size={80}
+                value={Number((profit * 100)/50000)}
+                color={profit > 0 ? "success" : "error"}
+                // variant="indeterminate"
+                thickness={6}
+              />
+            </Tooltip>
           </Grid>
         </Grid>
       </DashboardCard>
